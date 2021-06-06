@@ -66,8 +66,8 @@
         </div>
         
     </div>
-    <div id="placement" hidden=true></div>
-    <div id="buttons" hidden=true>
+    <div id="placement"></div>
+    <div id="buttons">
         <button id="coordenadaBtn" hidden=true>Elegir coordenada</button>
         <button id="turnoBtn">Pasar el turno</button>
         <button id="posicionBtn" hidden=true>Cambiar posición</button>
@@ -169,16 +169,14 @@
         e.target.hidden = true;
     })
 
-    document.getElementById("n").addEventListener("change", function(e){
-        var n = document.getElementById("n").value;
-        arregloAleatorio(n);
-        console.log(arreglo);
-        renderGrids(n);
-    })
-
     document.getElementById("turnoBtn").addEventListener("click", function(){
         pasarTurno();
     })
+
+    var n = document.getElementById("n").value;
+    arregloAleatorio(n);
+    console.log(arreglo);
+    renderGrids(n);
 
 </script>
 </html>
