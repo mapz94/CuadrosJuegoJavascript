@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuadros</title>
+    <style>
+
+        #placement{
+            max-width: 60%;
+            background-color: rgba(255,128,0,1);
+            padding: 0.8rem;
+        }
+        .grid{
+            background-color: rgba(255, 255, 255, 1);
+            border: 4px solid rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+        .grid:hover{
+            background-color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+        }
+        .row{
+            margin-bottom: 1rem;
+        }
+
+        .grid-true{
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+        .grid-true-red{
+            background-color: rgba(255, 0, 0, 0.7);
+        }
+        #buttons{
+            margin: 1rem;
+        }
+        #marcadores{
+            margin: 1rem;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>
+            Solemne II, Juego de cuadros.
+        </h1>
+        <h2>
+            Miguel Pérez
+        </h2>
+    </header>
+    <div class="row">
+        <label for="n">Cantidad de cuadros:</label>
+        <input id="n" type="number" min="2" max="16" value="6">
+        <span>*Al cambiar se reinicia la partida</span>
+    </div>
+    <div class="row">
+        <button id="comenzar">comenzar</button>
+    </div>
+    <div id="marcadores">
+        <div>
+            <h3 id="turnoText">Turno: Usuario</h3><!--usuario o computador-->
+        </div>
+        <div>
+            <h3 id="ultimaText">Coordenada escogida CPU:</h3> <!--#4-->
+        </div>
+        
+    </div>
+    <div id="placement" hidden=true></div>
+    <div id="buttons" hidden=true>
+        <button id="coordenadaBtn" hidden=true>Elegir coordenada</button>
+        <button id="turnoBtn">Pasar el turno</button>
+        <button id="posicionBtn" hidden=true>Cambiar posición</button>
+    </div>
+
+</body>
+<script>
+    var arreglo = [];
+    var turno = false; // false: usuario, true: computador
+
+    function turnoComputador(){
+        var escogida = 0;
+        while(arreglo.includes(false)){ // El computador nunca se va a equivocar
+            escogida = Math.floor(Math.random()*arreglo.length);
+            if(!arreglo[escogida]){
+                setTimeout(function(e){
+                    document.getElementById("ultimaText").innerHTML = "Coordenada escogida CPU: " + (escogida + 1).toString();
+                    var grids = document.getElementsByClassName("grid");
+                    arreglo[escogida] = true;
+                    if(grids.length) grids[escogida].classList.add("grid-true-red");
+                    if(!arreglo.includes(false)){
+                        alert("Perdiste el juego!");
+                    }
+                    else{
+                        pasarTurno();
+                    }
+                },2000);
+                break; 
+            }
+        }
+    }
+
+    function pasarTurno(){
+        turno = !turno;
+        document.getElementById("coordenadaBtn").disabled = turno;
+        document.getElementById("turnoBtn").disabled = turno;
+        document.getElementById("posicionBtn").disabled = turno;
+        if(turno){
+            document.getElementById("turnoText").innerHTML = "Turno: " + "CPU";
+            turnoComputador();
+        }
+        else{
+            document.getElementById("turnoText").innerHTML = "Turno: " + "Usuario";
+        }
+    }
+
+    function arregloAleatorio(n = 3){
+        // Limpiar arreglo
+        arreglo = [];
+        for(var i = 0; i < n * n; i++){
+            arreglo.push(!!Math.round(Math.random()-0.4)); // false o true
+        }
+    }
+
+    function renderGrids(n = 3){
+        var container = document.createElement("div");
+        container.style.display = "grid";
+        container.style.gridTemplateColumns = "auto ".repeat(n);
+        for(var i = 0; i < n*n; i++){
+            var grid = document.createElement("div");
+            grid.classList.add("grid");
+            grid.innerHTML = "<span style='font-size: 1.3rem;'>#</span>" + (i+1).toString();
+            grid.setAttribute("data-i", i); 
+            grid.addEventListener("click", function(e){
+                var i = e.target.getAttribute("data-i");
+                if(turno == false && !arreglo[i]){
+                    e.target.classList.add("grid-true");
+                    var i = e.target.getAttribute("data-i");
+                    arreglo[i] = true;
+                    if(arreglo.includes(false)){
+                        console.log(arreglo);
+                    }
+                    else{
+                        alert("Ganaste el juego!!");
+                    }
+                    pasarTurno();
+                    
+                }
+                // Lo que quiero que los cuadros hagan
+            })
+            if(arreglo[i]){
+                grid.classList.add("grid-true");
+            }
+            container.append(grid);
+        }
+        var place = document.getElementById("placement");
+        //Reset
+        place.innerHTML = "";
+        place.appendChild(container);
+    }
+
+    document.getElementById("comenzar").addEventListener("click", function(e){
+        document.getElementById("buttons").hidden = false;
+        document.getElementById("placement").hidden = false;
+        var n = document.getElementById("n").value;
+        arregloAleatorio(n);
+        console.log(arreglo);
+        renderGrids(n);
+        e.target.hidden = true;
+    })
+
+    document.getElementById("n").addEventListener("change", function(e){
+        var n = document.getElementById("n").value;
+        arregloAleatorio(n);
+        console.log(arreglo);
+        renderGrids(n);
+    })
+
+    document.getElementById("turnoBtn").addEventListener("click", function(){
+        pasarTurno();
+    })
+
+</script>
+</html>
