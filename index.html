@@ -123,13 +123,9 @@
 
     function RandomMap(n = 3){
         let array = [];
-        let i = 0;
         let handicap = document.getElementById("handicap").value/100;
-        console.log(handicap)
-        while(i < n * n){
+        for(let i = 0; i < n*n; i++)
             array.push(Math.random() < handicap);
-            i++;
-        }
         theMap = Object.assign({},array);
     }
 
