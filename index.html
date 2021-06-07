@@ -6,22 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cuadros</title>
     <style>
-        body{
-            user-select: none; /* supported by Chrome and Opera */
-            -webkit-user-select: none; /* Safari */
-            -khtml-user-select: none; /* Konqueror HTML */
-            -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* Internet Explorer/Edge */
+        body, span{
+            user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
-
+        body > div{
+            margin: 0.5rem;
+        }
         #placement{
             max-width: 60%;
             background-color: rgba(255,128,0,1);
             padding: 0.8rem;
+            overflow: auto;
         }
         .grid{
+            padding: 0.4rem;
             background-color: white;
-            border: 4px solid black;
+            border: 3px solid black;
             text-align: center;
         }
         .grid:hover{
@@ -34,9 +36,7 @@
         .grid-true-cpu{
             background-color: red;
         }
-        body > div{
-            margin: 0.5rem;
-        }
+        
     </style>
 </head>
 <body>
@@ -50,7 +50,7 @@
     </header>
     <div>
         <label for="n">Cantidad de cuadros:</label>
-        <input id="n" type="number" min="2" max="16" value="6">
+        <input id="n" type="number" min="2" max="10" value="6">
         <span>al cuadrado.</span>
     </div>
     <div>
@@ -101,7 +101,7 @@
             chosen = Math.floor(Math.random()*Object.values(theMap).length);
             if(!theMap[chosen]){
                 setTimeout(function(e){
-                    document.getElementById("cpuText").innerHTML = `Coordenada escogida del CPU: ${chosen}`;
+                    document.getElementById("cpuText").innerHTML = `Coordenada escogida del CPU: ${chosen+1}`;
                     theMap[chosen] = true;
                     var grids = document.getElementsByClassName("grid");
                     if(grids.length) grids[chosen].classList.add("grid-true-cpu");
@@ -140,7 +140,7 @@
         for(let key of Object.keys(theMap)){
             var grid = document.createElement("div");
             grid.classList.add("grid");
-            grid.innerHTML = `<span style='font-size: 1.3rem;'>#</span>${parseInt(key)+1}`;
+            grid.innerHTML = `#${parseInt(key)+1}`;
             grid.setAttribute("data-i", key); 
             grid.addEventListener("click", function(e){
                 let i = e.target.getAttribute("data-i");
@@ -162,6 +162,7 @@
     }
 
     function reset(){
+        turn = false;
         var n = document.getElementById("n").value; // n veces columnas y filas
         RandomMap(n);
         renderGrids(n);
