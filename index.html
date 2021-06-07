@@ -129,9 +129,18 @@
     function RandomMap(n = 3){
         let array = [];
         let handicap = document.getElementById("handicap").value/100;
-        for(let i = 0; i < n*n; i++)
+        let i = 0;
+        while(i < n*n){  
             array.push(Math.random() < handicap);
-        theMap = Object.assign({},array);
+            i++
+            if(!i < n*n && !array.includes(false)){
+                // En el caso de que todos sean true, se hace denuevo.
+                array = [];
+                i = 0;
+                continue;
+            }
+        }
+        theMap = Object.assign({},array); // Convertir el array a objeto.
     }
 
     function RenderGrids(n = 3){
