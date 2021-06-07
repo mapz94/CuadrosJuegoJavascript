@@ -80,22 +80,24 @@
 
     <div id="placement"></div>
     <div>
-        <button id="coordenadaBtn" hidden=true>Elegir coordenada</button>
+        <button id="coordenadaBtn" hidden>Elegir coordenada</button>
         <button id="turnBtn">Pasar el turno</button>
-        <button id="posicionBtn" hidden=true>Cambiar posición</button>
+        <button id="posicionBtn" hidden>Cambiar posición</button>
+        <button id="resetBtn" hidden>Reiniciar</button>
     </div>
 
 </body>
 <script>
     var theMap = null;
     var turn = false; // false: user, true: cpu
+    var resetBtn = document.getElementById("resetBtn");
 
     function Score(){
         document.getElementById("userScore").innerHTML = `Puntaje Usuario: ${document.getElementsByClassName("grid-true").length}`;
         document.getElementById("cpuScore").innerHTML = `Puntaje CPU: ${document.getElementsByClassName("grid-true-cpu").length}`;
     }
 
-    function turnCPU(){
+    function TurnCPU(){
         var chosen = 0;
         while(Object.values(theMap).includes(false)){
             chosen = Math.floor(Math.random()*Object.values(theMap).length);
@@ -105,7 +107,10 @@
                     theMap[chosen] = true;
                     var grids = document.getElementsByClassName("grid");
                     if(grids.length) grids[chosen].classList.add("grid-true-cpu");
-                    if(!Object.values(theMap).includes(false))alert("Perdiste el juego!");
+                    if(!Object.values(theMap).includes(false)){
+                        alert("Perdiste el juego!");
+                        resetBtn.hidden = false;
+                    }
                     else PassTurn();
                 },2000);
                 break; 
@@ -117,7 +122,7 @@
         turn = !turn;
         document.getElementById("turnBtn").disabled = turn;
         document.getElementById("turnText").innerHTML = turn ? 'Turno: CPU' : 'Turno: Usuario';
-        if(turn)turnCPU();
+        if(turn)TurnCPU();
         Score();
     }
 
@@ -129,7 +134,7 @@
         theMap = Object.assign({},array);
     }
 
-    function renderGrids(n = 3){
+    function RenderGrids(n = 3){
         let container = document.createElement("div");
         container.style.display = "grid";
         container.style.gridTemplateColumns = "auto ".repeat(n);
@@ -144,7 +149,10 @@
                     e.target.classList.add("grid-true");
                     theMap[i] = true;
                     if(Object.values(theMap).includes(false))console.log(theMap);
-                    else alert("Ganaste el juego!!");
+                    else {
+                        alert("Ganaste el juego!!");
+                        resetBtn.hidden = false;
+                    }
                     PassTurn();
                     
                 }
@@ -157,23 +165,27 @@
         place.appendChild(container);
     }
 
-    function reset(){
+    function Reset(){
         turn = false;
+        resetBtn.hidden = true;
         var n = document.getElementById("n").value; // n veces columnas y filas
         RandomMap(n);
-        renderGrids(n);
+        RenderGrids(n);
     }
     document.getElementById("n").addEventListener("change", function(e){
-        reset();
+        Reset();
     })
     document.getElementById("handicap").addEventListener("change", function(e){
-        reset();
+        Reset();
     })
 
     document.getElementById("turnBtn").addEventListener("click", function(){
         PassTurn();
     })
-    reset();
+    resetBtn.addEventListener("click", function(){
+        Reset();
+    })
+    Reset();
     Score();
 
 </script>
